@@ -1,0 +1,46 @@
+.logn{
+    /* background-color: white; */
+    width: fit-content;
+    padding: 50px;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    border:  none;
+    box-shadow:0 0 12px  var(--second--color);
+    
+}
+.user-input {
+    height: 37px;
+    border: 1px solid #979797;
+    border-radius: 8px;
+  }
+  .title-login {
+    color: #555550;
+    font-family: Almarai;
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 28px;
+    text-align: right;
+    margin-bottom: 30px;
+  }
+  .btn-login {
+    height: 46px;
+    width: 374px;
+    border-radius: 9px;
+    border: none;
+    color: white;
+    font-weight: bold;
+    background-color: var(--main--color);
+    
+  }
+  .btn-login:hover {
+    background-color: #7e7e7e;
+    transition: 0.3s;
+  
+  border: 1px solid #7e7e7e;
+  }
+  .load{
+    
+  }
+  

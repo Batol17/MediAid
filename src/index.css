@@ -1,0 +1,17 @@
+*{
+    box-sizing: border-box;
+}
+:root{
+    --main--color:#990394e6;
+    --second--color:  rgb(131, 18, 104);
+}
+body{
+  background: radial-gradient(ellipse at center, rgba(12, 12, 12,.1) 0%, #cecbcb 90%);
+  /* radial-gradient(ellipse at center, rgb(204, 203, 203) 0%, #faf8f8 90%); */
+
+}
+a {
+  text-decoration: none;
+  color: black;
+  
+}
