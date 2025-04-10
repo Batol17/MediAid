@@ -1,10 +1,11 @@
 .card-pro {
     border-radius: 12px;
-    width: 300px;  
+    /* min-width: 250px;   */
      display: flex;
     flex-direction: column;
     justify-content: center;
     height: 100% !important;
+    margin-bottom: 30px;
     
 }
 
@@ -95,6 +96,7 @@
   font-size: 2rem;
   font-weight: bold;
   color: #dc3545;
+
 }
 
 .product-info {
@@ -113,24 +115,15 @@
   padding-right: 10px;
   font-size: 1rem;
 }
-
-.btn-cart {
-   font-family: monospace;
-    font-weight: bolder;
-    background-color: var(--main--color);
-    border: none;
-    font-style: oblique;
-    width: fit-content;
-    padding: 10px;
-    border-radius: 10px;
-  transition: all 0.3s ease-in-out;
+.title-datail{
+  font-style: normal;
+    font-family: none;
 }
-
-.btn-cart:hover {
+.txt-detail{
+  font-size: larger;
+  line-height: 2;
   font-family: monospace;
-  font-weight: bolder;
-  background-color: var(--second--color);
- color: black;
-  font-style: oblique;
-  transition: 0.3s;
+}
+.img-detail{
+  max-height: 500px;
 }

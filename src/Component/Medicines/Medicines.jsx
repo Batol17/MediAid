@@ -3,9 +3,12 @@ import Medicine from './Medicine'
 import { Container, Row } from 'react-bootstrap'
 import { useGetDataQuery } from '../../redux/feature/api/categories/categoriesApi';
 import Cookies from 'universal-cookie';
-
+import { useSelector } from 'react-redux';
+import { Fade } from 'react-awesome-reveal';
+import Slider from 'react-slick';
 
 const Medicines = () => {
+  const prodcts=useSelector(state => state.filterPro.form)
   const { data:pro, error, isLoading } = useGetDataQuery('products/products');
  pro && console.log('dataaaaa', pro);
 
@@ -28,12 +31,46 @@ const Medicines = () => {
 //   }
 // getdata()
 // },[])
+const settings = {
+  className: "center",
+  infinite: true,
+  // centerPadding: "60px",
+  slidesToShow: 4,
+  dots: false,
+  autoplay: false,
+  speed: 4000,
+  autoplaySpeed: 2000,
+  swipeToSlide: true,
+  cssEase: "linear",
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 2,
+        infinite: true,
+      }
+    },
+    {
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 2,
+        initialSlide: 2
+      }
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        slidesToShow: 1,
+      }
+    }
+  ]
+};
   useEffect(() => {
-    pro && setProducts(pro)
+    prodcts && setProducts(prodcts)
 
-    console.log('dataaaaa', pro);
+    console.log('dataaaaa', prodcts);
     
-  }, [pro]);
+  }, [prodcts]);
   
   if (isLoading) return <p>جاري التحميل...</p>;
   if (error) return <p>حدث خطأ في جلب البيانات!</p>;
@@ -42,15 +79,20 @@ const Medicines = () => {
   return (
     
    <Container>
-     <Row className='d-flex justify-content-center col-pro'>
-      {  products && products?.map((medicine,i)=>(
-          <Medicine key={i} medicine={medicine}/>
-// console.log(medicine)
+   {/* d-flex justify-content-center col-pro */}
+     <div className='px-4'>
+        <Slider {...settings}>
+        {  products && products?.map((medicine,i)=>(
+         <div  key={i}  >
+          <Medicine   medicine={medicine}/>
+          {/* <Medicine   medicine={medicine}/> */}
+        </div>
 
       ))}
+        </Slider>
      
    
-     </Row>
+     </div>
    </Container>
   )
 }

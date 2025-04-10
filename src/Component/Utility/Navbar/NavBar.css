@@ -17,6 +17,22 @@
     padding-top: 15px;
     padding-bottom: 15px;
 }
+.kafo {
+    font-weight: 600;
+    font-family: system-ui;
+    border: none;
+    background-color: inherit;
+   
+    font-size: larger;
+    transition: transform 0.3s ease; 
+    cursor: pointer;
+}
+
+.kafo:hover {
+    transform: scale(0.9);
+}
+
+
 .search{
     border:1px solid white;
     background-color:inherit;
@@ -50,7 +66,7 @@
 }
 .drop-item:focus{
     background-color: inherit;
-    color: white;
+    color: inherit;
 }
 .welcome{
     color: white;
@@ -61,5 +77,5 @@
 }
 
 .sidebar.active {
-    transform: translateX(-100%); /* نقل الشريط الجانبي إلى الداخل */
+    transform: translateX(-100%);
 }

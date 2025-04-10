@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import './Categories.css'
 import {  useGetDataQuery } from '../../redux/feature/api/categories/categoriesApi';
 import Cookies from 'universal-cookie';
-
+import { Fade } from 'react-awesome-reveal';
 const Categories = () => {
   const {data} =   useGetDataQuery('categories/all');
   const [categores,setCategores] = useState([])
@@ -33,7 +33,15 @@ const Categories = () => {
 // },[])
   return (
     
+      <Fade
+              style={{ margin: "auto" }}
+              delay={300}
+              direction="up"
+              triggerOnce={true}
+              cascade
+            >
      <div className='d-flex justify-content-center align-item-center gap-2'>
+
       {data && categores?.map((category, index) => ( 
         // تأكد من أن البيانات موجودة قبل التكرار عليها
        <div key={index}>
@@ -41,7 +49,10 @@ const Categories = () => {
          <p  className='cat'>{category.name} </p> 
        </div>// افترض أن كل فئة تحتوي على خاصية "name"
       ))}
-    </div>
+      </div>
+      
+      </Fade>
+    
   )
 }
 

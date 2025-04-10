@@ -3,6 +3,7 @@ import { useVerifyCodeMutation } from "../../redux/feature/api/authApi";
 import { Col, Row, Spinner, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
+import { Fade } from "react-awesome-reveal";
 
 const Verify = () => {
   const navigate = useNavigate();
@@ -41,7 +42,16 @@ const Verify = () => {
   };
 
   return (
-    <Row className="d-flex justify-content-center align-items-center" style={{ minHeight: "80vh" }}>
+    <div  style={{ minHeight: "80vh" }}>
+      <Fade
+      
+          style={{ margin: "auto" }}
+          delay={300}
+          direction="up"
+          triggerOnce={true}
+          cascade
+          >
+       <Row className="d-flex justify-content-center align-items-center">
       <Col sm="6" lg="6" className="logn my-4 d-flex flex-column align-items-center">
         <label className="mx-auto title-login">Verify Your Email</label>
         
@@ -62,7 +72,7 @@ const Verify = () => {
             onChange={(e) => setVerificationCode(e.target.value)}
             required
           />
-          <button type="submit" className="btn-login mx-auto mt-3 w-100" disabled={isLoading}>
+          <button type="submit" className="btn-submit mx-auto mt-3 w-100" disabled={isLoading}>
             {isLoading ? <Spinner animation="border" size="sm" /> : "تحقق"}
           </button>
         </form>
@@ -71,6 +81,10 @@ const Verify = () => {
         {message.text && <Alert variant={message.type} className="mt-3">{message.text}</Alert>}
       </Col>
     </Row>
+
+       </Fade>
+    </div>
+   
   );
 };
 

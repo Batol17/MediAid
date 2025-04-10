@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Container, Form, Nav, Navbar, NavDropdown, Offcanvas } from 'react-bootstrap';
 import { CiLogin, CiShoppingCart, CiHeart } from "react-icons/ci";
-import { FaUserCircle } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import logo from '../../../assets/logo1.png';
 import SideBar from '../SideBar/SideBar';
-import { IoIosList } from 'react-icons/io';
-import { useGetSearchQuery } from '../../../redux/feature/api/categories/categoriesApi';
+import { MdEmojiPeople } from "react-icons/md";
+import { IoIosList } from "react-icons/io";
+import { useGetDataQuery, useGetSearchQuery } from '../../../redux/feature/api/categories/categoriesApi';
 import { useDispatch, useSelector } from 'react-redux';
 import './NavBar.css';
 import { setSearchTerm } from '../../../redux/feature/slice/SearchSlice';
+import { filterProducts } from '../../../redux/feature/slice/ProductsSlice';
+import { toast } from 'react-toastify';
+
 
 function NavBar({ isLoggedIn }) {
   const cookies = new Cookies();
@@ -18,31 +21,60 @@ function NavBar({ isLoggedIn }) {
   const type = cookies.get('type');
   const name = cookies.get('name') || 'User'; 
   const [show, setShow] = useState(false);
+  const dispath = useDispatch();
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(isLoggedIn);
+  const { data: allProducts, error, isLoading } = useGetDataQuery('products/products');
+  allProducts && console.log('dataaaaa', allProducts);
 
-  // ✅ تحديث الحالة عند تغيير `isLoggedIn`
   useEffect(() => {
     setIsUserLoggedIn(isLoggedIn);
   }, [isLoggedIn]);
 
-  // ✅ جلب `searchTerm` من Redux
   const searchTerm = useSelector((state) => state.search.searchTerm);
+  
+  // فلترةةة 
+  const filteredProducts = allProducts?.filter(product =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  // ✅ جلب البيانات باستخدام RTK Query
+  useEffect(() => {
+    dispath(filterProducts(filteredProducts));
+  }, [searchTerm, allProducts]);
+
   const { data } = useGetSearchQuery(
     searchTerm ? `products/search/${searchTerm}` : '',
     { skip: !searchTerm }
   );
 
-  // ✅ تحديث قيمة البحث
   const handleSearchChange = (e) => {
     dispatch(setSearchTerm(e.target.value));
   };
 
-  // ✅ منع إعادة تحميل الصفحة عند البحث
   const handleSearchSubmit = (e) => {
     e.preventDefault();
+
+    const trimmedTerm = searchTerm.trim();
+
+    if (!trimmedTerm) {
+      toast.warning("Please enter a search term 🔍");
+      return;
+    }
+
+    if (allProducts) {
+      const results = allProducts.filter(product =>
+        product.name.toLowerCase().includes(trimmedTerm.toLowerCase())
+      );
+
+      dispatch(filterProducts(results));
+
+      if (results.length > 0) {
+        toast.success(`Found ${results.length} result(s) for "${trimmedTerm}" 🎯`);
+      } else {
+        toast.error(`No results found for "${trimmedTerm}" 😕`);
+      }
+    }
   };
+
 
 
   return (
@@ -52,8 +84,7 @@ function NavBar({ isLoggedIn }) {
       <Navbar expand="lg">
         <Container className="d-flex justify-content-between align-items-center">
           
-          {/* 🔹 اللوجو */}
-          <Nav.Link as={Link} to="/">
+        <Nav.Link as={Link} to="/">
             <img src={logo} alt="MediAid" className="logo" />
           </Nav.Link>
 
@@ -66,7 +97,7 @@ function NavBar({ isLoggedIn }) {
                  </i>
                  <Offcanvas show={show} onHide={() => setShow(false)} placement="end">
                    <Offcanvas.Header closeButton>
-                     <Offcanvas.Title>Menu</Offcanvas.Title>
+                     <Offcanvas.Title>😎</Offcanvas.Title>
                    </Offcanvas.Header>
                    <Offcanvas.Body>
                      <SideBar />
@@ -82,8 +113,8 @@ function NavBar({ isLoggedIn }) {
 
                
                 <NavDropdown title="SignUp" align="end" menuVariant="light" className="drop-border text-dark">
-                  <NavDropdown.Item as={Link} to="/registerPha">Sign Up as a Pharmacist</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/registerUser">Sign Up as a User</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/registerPha" className='drop-item'>Sign Up as a Pharmacist</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/registerUser" className='drop-item'>Sign Up as a User</NavDropdown.Item>
                 </NavDropdown>
               </>
             )}
@@ -98,8 +129,10 @@ function NavBar({ isLoggedIn }) {
         <Container>
           <div className="d-flex justify-content-between align-items-center w-100">
           
-            <p className="welcome">Welcome {name} 👋🏻</p>
-
+            {/* <p className="welcome">Welcome {name} 👋🏻</p> */}
+            <Nav.Link as={Link} to="/kafuo" className='kafo text-white'>
+            Kafuo <MdEmojiPeople />
+              </Nav.Link>
             
             <Form className="col-7 d-flex mx-auto" onSubmit={handleSearchSubmit}>
               <Form.Control

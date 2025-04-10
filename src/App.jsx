@@ -16,7 +16,14 @@ import MedicineDetail from './Component/Medicines/MedicineDetail';
 import Cookies from 'universal-cookie';
 import { useEffect, useState } from 'react';
 import Pharmacy from './Component/Pharmacy/Pharmacy';
+import { ToastContainer } from 'react-toastify';
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
 
+import 'react-toastify/dist/ReactToastify.css';
+import KafouPost from './Component/KafouPost/KafouPost';
+import Map from './Component/Map/Map';
+import Maap from './Component/Map/Maap';
 function App() {
   const cookies = new Cookies()
   const [isLoggedIn, setIsLoggedIn] = useState(cookies.get("token"));
@@ -29,14 +36,10 @@ function App() {
  
   return (
     <>
-      <BrowserRouter>
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
 
+      <BrowserRouter>
       <NavBar isLoggedIn={isLoggedIn}/>
-       {/* <div className='d-flex row'> */}
-            {/* <div className='col-2'> */}
-              {/* <SideBar/> */}
-            {/* </div> */}
-           {/* <div className='col-8'> */}
            <Routes >
                 <Route path='/' element={<HomePage />} />
                 <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
@@ -47,7 +50,10 @@ function App() {
                 <Route path='favourite' element={<Favourite />} />   
                 <Route path='cart' element={<Cart />} />   
                 <Route path='orders' element={<Orders />} />   
+                <Route path='kafuo' element={<KafouPost />} />   
                 <Route path='my-pharmacy' element={<Pharmacy />} />   
+                <Route path='map1' element={<Map />} />   
+                <Route path='map' element={<Maap />} />   
                 <Route path='products/products/:productId' element={<MedicineDetail />} />   
             </Routes>
            {/* </div>

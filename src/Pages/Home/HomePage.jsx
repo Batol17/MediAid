@@ -11,8 +11,21 @@ const HomePage = () => {
       <Carousel />
       <SubTitle title="Categories" />
       <Categories />
-      <SubTitle title="Medicines in Stock" />
+      <SubTitle title="Medicines in Stock" btnTitle={'More'} />
       <Medicines/>
+      <SubTitle title="Skin Care Medications" icon={'👌'} btnTitle={'More'}/>
+      <Medicines/>
+
+      <SubTitle title="Painkillers" icon={'💊'} btnTitle={'More'}/>
+      <Medicines/>
+
+      <SubTitle title="Hair Care Medications" icon={''} btnTitle={'More'}/>
+      <Medicines/>
+
+      <SubTitle title="Important Medicines For Every Home " icon={'🏠'} btnTitle={'More'}/>
+      <Medicines/>
+
+
       {/* {medicinesData && <Medicines medicines={medicinesData} />} */}
     </div>
   );

@@ -1,128 +1,175 @@
 import React, { useCallback, useState } from 'react';
-import { Button, Card, Col, Form, Modal } from 'react-bootstrap';
+import { Button, Card, Col, Form, Modal, Spinner } from 'react-bootstrap';
 import { FaHeart, FaCartPlus } from "react-icons/fa";
-import image from '../../assets/7.jpg';
-import './Medicines.css';
-import { useAddToCartMutation, useAddToFavMutation, useRemoveFromCartMutation } from '../../redux/feature/api/categories/categoriesApi'; // تأكد من إضافة دالة removeFromCart
+import image from '../../assets/pro12.png';
+import { useAddToCartMutation, useAddToFavMutation, useRemoveFromCartMutation } from '../../redux/feature/api/categories/categoriesApi';
 import Cookies from 'universal-cookie';
 import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { addMedicine, setMedicineToPh } from '../../redux/feature/slice/MedicinetoPhaSlice';
+import { useDispatch } from 'react-redux';
+import { addMedicine } from '../../redux/feature/slice/MedicinetoPhaSlice';
+import { toast } from 'react-toastify';
+import {Fade} from 'react-awesome-reveal'
+import './Medicines.css'
 const Medicine = ({ medicine }) => {
   const cookies = new Cookies();
   const userType = cookies.get('type');
-  const dispatch=useDispatch()
-  
+  const dispatch = useDispatch();
+
   const [addToFav] = useAddToFavMutation(); 
   const [addToCart] = useAddToCartMutation();
   const [removeFromCart] = useRemoveFromCartMutation(); 
+
   const [isFavorited, setIsFavorited] = useState(false); 
   const [isInCart, setIsInCart] = useState(false);
+  const [loadingCart, setLoadingCart] = useState(false);
+  const [loadingFav, setLoadingFav] = useState(false);
+  const [show, setShow] = useState(false);
+
+  const [form, setForm] = useState({
+    medicineId: medicine?._id,
+    quantity: '',
+    price: ''
+  });
+
+  const handleInputChange = useCallback((field, value) => {
+    setForm(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  }, []);
 
   const addToFavourite = () => {
     if (!isFavorited) {
+      setLoadingFav(true);
       addToFav(medicine?._id)
-        .unwrap() // استخدام unwrap للتعامل مع النتائج بشكل أفضل
+        .unwrap()
         .then(() => {
           setIsFavorited(true);
-          console.log('Added to favorites');
+          toast.success('Added to favorites');
         })
-        .catch((error) => console.error('Failed to add to favorites: ', error));
+        .catch(() => toast.error('Failed to add to favorites'))
+        .finally(() => setLoadingFav(false));
     }
   };
-  const [form,setForm]=useState({
-    id:medicine._id,
-    quantity:Number,
-    price:Number
-  })
-   const handleInputChange = useCallback((field, value) => {
-    setForm(prev => ({ ...prev, [field]: value }));
-    }, []);
 
   const addToCartHandler = () => {
     if (!isInCart) {
-      addToCart(medicine?._id) 
+      setLoadingCart(true);
+      addToCart(medicine?._id)
         .unwrap()
         .then(() => {
           setIsInCart(true);
-          console.log('Added to cart');
+          toast.success("Added to cart");
         })
-        .catch((error) => console.error('Failed to add to cart: ', error));
+        .catch(() => toast.error("Failed to add to cart"))
+        .finally(() => setLoadingCart(false));
     } else {
-      removeFromCart(medicine?._id) 
-        .unwrap()
-        .then(() => {
-          setIsInCart(false);
-          console.log('Removed from cart');
-        })
-        .catch((error) => console.error('Failed to remove from cart: ', error));
+      if (window.confirm("Are you sure you want to remove this item from your cart?")) {
+        setLoadingCart(true);
+        removeFromCart(medicine?._id)
+          .unwrap()
+          .then(() => {
+            setIsInCart(false);
+            toast.success("Removed from cart");
+          })
+          .catch(() => toast.error("Failed to remove from cart"))
+          .finally(() => setLoadingCart(false));
+      }
     }
   };
-  const addTopharmacy=()=>{
 
-    dispatch(addMedicine(form))
-    console.log(form);
-    
-    
+  const addToPharmacy = () => {
+    const { medicineId, price, quantity } = form;
 
-  }
-  // Modall 
-  const [show, setShow] = useState(false);
+    if (!medicineId || !price || !quantity || price <= 0 || quantity <= 0) {
+      toast.warn("Please enter valid price and quantity");
+      return;
+    }
+
+    dispatch(addMedicine({
+      medicineId,
+      price: Number(price),
+      quantity: Number(quantity)
+    }));
+
+    handleClose();
+    toast.success("Medicine added to pharmacy");
+  };
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
   return (
-    <Col xs={12} sm={6} md={4} lg={3} className='col-card my-1 d-flex justify-content-center align-items-center' style={{ height: '450px !important' }}>
-      <Card className='card-pro me-1'>
+   
+  
+     <>
+       <Card className='card-pro me-1'  >
         <Link to={`/products/products/${medicine?._id}`}>
           <Card.Img variant='top' src={image} className='img-pro' />
         </Link>
         <div className='px-2'>
           <div className='icon-container'>
             <i className='icon-card-heart' onClick={addToFavourite}>
-              <FaHeart color={isFavorited ? 'red' : 'gray'} />
+              {loadingFav ? <Spinner animation="border" size="sm" /> : <FaHeart color={isFavorited ? 'red' : 'gray'} />}
             </i>
             <i className='icon-card-cart' onClick={addToCartHandler}>
-              <FaCartPlus color={isInCart ? 'green' : 'black'} /> {/* تغيير اللون بناءً على الحالة */}
+              {loadingCart ? <Spinner animation="border" size="sm" /> : <FaCartPlus color={isInCart ? 'green' : 'gray'} />}
             </i>
           </div>
           <h5 className='text-danger fs-5'>{medicine?.name}</h5>
           <Card.Text>
-            {medicine?.description.length <= 44 ? medicine?.description :` ${medicine?.description.slice(0, 45)}...`}
+            {medicine?.description?.length <= 44 ? medicine?.description : `${medicine?.description?.slice(0, 45)}...`}
           </Card.Text>
         </div>
+        <Fade
+          className="w-100 text-center"
+          delay={0}
+          direction="up"
+          triggerOnce={true}
+          cascade
+        >
         <div className="d-flex justify-content-between align-items-center px-2 mb-2 mt-auto">
-          {/* <img src={rate} alt="Rating" height="16px" width="16px" /> */}
-          <p className='price'>{medicine?.price}</p>
+          <p className='price'>${medicine?.price}</p>
         </div>
-       {
-        userType === 'pharmacist'?
-        <button onClick={handleShow} className='btn btn-dark mx-2 mb-1'>Add to my Pharmacy</button> 
-        :''
-     
-       }  </Card>
-       {/* modal */}
-       <Modal centered show={show} onHide={handleClose}>
+        </Fade>
+
+        {userType === 'pharmacist' && (
+          <button onClick={handleShow} className='btn btn-outline-dark mx-2 mb-1'>Add to My Pharmacy</button>
+        )}
+      </Card>
+
+      <Modal centered show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Add Medicine to Pharmacy</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
-          <Form.Control type="number" placeholder="quantity..." value={form.quantity} className="my-2" onChange={e => handleInputChange('quantity', e.target.value)} required />
-          <Form.Control type="number" placeholder="price..." value={form.price} className="my-2" onChange={e => handleInputChange('price', e.target.value)} required />
-             
+            <Form.Control
+              type="number"
+              placeholder="Enter quantity..."
+              value={form.quantity}
+              className="my-2"
+              onChange={e => handleInputChange('quantity', Number(e.target.value))}
+              required
+              min={1}
+            />
+            <Form.Control
+              type="number"
+              placeholder="Enter price..."
+              value={form.price}
+              className="my-2"
+              onChange={e => handleInputChange('price', Number(e.target.value))}
+              required
+              min={1}
+            />
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={()=>addTopharmacy()} >
-            Save Changes
-          </Button>
+          <button variant="secondary"   onClick={handleClose} style={{width:'80px'}}>Close</button>
+          <button  className='btn-submit' onClick={addToPharmacy} style={{width:'80px'}}>Save</button>
         </Modal.Footer>
       </Modal>
-    </Col>
+     </>
     
   );
 };

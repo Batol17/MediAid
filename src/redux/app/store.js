@@ -6,6 +6,7 @@ import SearchReducer from '../feature/slice/SearchSlice.jsx'
 import { categoriesApi } from "../feature/api/categories/categoriesApi";
 import { favApi } from "../feature/api/favourite/favApi";
 import  MedicinetoPhaReducer  from "../feature/slice/MedicinetoPhaSlice.jsx";
+import filterProductsReducer  from "../feature/slice/ProductsSlice.jsx";
 export const store =  configureStore({
     reducer:{
         [medicinesApi.reducerPath]: medicinesApi.reducer,
@@ -15,6 +16,7 @@ export const store =  configureStore({
         search: SearchReducer,
         medicineToPh: MedicinetoPhaReducer,
         auth:authReducer,
+        filterPro:filterProductsReducer
     },
     middleware:(getDefaultMiddleware) => getDefaultMiddleware().concat(
         medicinesApi.middleware,
